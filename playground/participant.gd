@@ -12,7 +12,7 @@ func update(data: Dictionary) -> void:
 
 	var http_request = HTTPRequest.new()
 	add_child(http_request)
-	var http_error = http_request.request("https://cdn.discordapp.com/avatars/"+data["id"]+"/"+data["avatar"]+".png?size=64")
+	var _http_error = http_request.request("https://cdn.discordapp.com/avatars/"+data["id"]+"/"+data["avatar"]+".png?size=64")
 	var response = await http_request.request_completed
 	print("loaded image?")
 	print(response[1])

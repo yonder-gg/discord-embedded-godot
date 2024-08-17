@@ -1,5 +1,7 @@
 extends Control
 
+const CLIENT_ID = "1219337474266894397"
+
 @onready var discord : DiscordSDK = get_node("/root/Discord")
 @onready var log_node : RichTextLabel = $"HBoxContainer/VSplitContainer/Log"
 @onready var dispatch_log_node : RichTextLabel = $"%Dispatch"
@@ -9,8 +11,8 @@ var pip_interactivity_press_count = 0
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	discord.init("1219337474266894397")
-
+	discord.init(CLIENT_ID)
+	
 	discord.connect("dispatch_any", Callable(self, "_dispatch"))
 	discord.connect("dispatch_current_user_update", Callable(self, "_user_updated"))
 	
@@ -73,7 +75,7 @@ func _pip_change(data) -> void:
 func _on_set_config_button_pressed() -> void:
 	var config = $"%PipInteractivityState".get_selected_id() == 1
 	msg("[i]discord.command_set_config(" + str(config) + ")[/i]")
-	var result = await discord.command_set_config(config)
+	var _result = await discord.command_set_config(config)
 	msg("[i][b]no output[/b][/i]")
 
 
@@ -93,7 +95,7 @@ func _on_capture_log_button_pressed() -> void:
 			level = "error"
 	var message = $"%LogMessage".text
 	msg("[i]discord.command_capture_log(\"" + level + "\", \"" + message + "\")[/i]")
-	var result = await discord.command_capture_log(level, message)
+	var _result = await discord.command_capture_log(level, message)
 	msg("[i][b]no output[/b][/i]")
 
 
@@ -106,7 +108,7 @@ func _on_encourage_hw_accel_pressed() -> void:
 func _on_external_url_button_pressed() -> void:
 	var url = $"%ExternalUrlInput".text
 	msg("[i]discord.command_open_external_link(" + str(url) + ")[/i]")
-	var result = await discord.command_open_external_link(url)
+	var _result = await discord.command_open_external_link(url)
 	msg("[i][b]no output[/b][/i]")
 
 
@@ -116,7 +118,7 @@ func _on_set_orientation_lock_button_pressed() -> void:
 	var grid_lock_state = -1 if $"%GridLockState".get_selected_id() == 0 else $"%GridLockState".get_selected_id()
 
 	msg("[i]discord.command_set_orientation_lock_state(" + str(lock_state) + ", " + str(pip_lock_state) + ", " + str(grid_lock_state) + ")[/i]")
-	var result = await discord.command_set_orientation_lock_state(lock_state, pip_lock_state, grid_lock_state)
+	var _result = await discord.command_set_orientation_lock_state(lock_state, pip_lock_state, grid_lock_state)
 	msg("[i][b]no output[/b][/i]")
 
 
@@ -178,13 +180,13 @@ func _on_initiate_image_upload_button_pressed() -> void:
 func _on_share_moment_button_pressed() -> void:
 	var line_edit : LineEdit = $"%ShareMomentUrl"
 	msg("[i]discord.command_open_share_moment_dialog()[/i]")
-	var result = await discord.command_open_share_moment_dialog(line_edit.text)
+	var _result = await discord.command_open_share_moment_dialog(line_edit.text)
 	msg("[i][b]no output[/b][/i]")
 
 
 func _on_invite_button_pressed() -> void:
 	msg("[i]discord.command_open_invite_dialog()[/i]")
-	var result = await discord.command_open_invite_dialog()
+	var _result = await discord.command_open_invite_dialog()
 	msg("[i][b]no output[/b][/i]")
 
 
@@ -260,8 +262,8 @@ func _on_oauth_authorize_button_pressed() -> void:
 	var hreq = HTTPRequest.new()
 	hreq.accept_gzip = false # ?? huh? https://forum.godotengine.org/t/-/37681/19
 	add_child(hreq)
-	var token_res = hreq.request(
-		"https://1219337474266894397.discordsays.com/api/auth",
+	var _token_res = hreq.request(
+		"https://" + CLIENT_ID + ".discordsays.com/.proxy/api/auth",
 		["Content-Type: application/x-www-form-urlencoded"],
 		HTTPClient.METHOD_POST,
 		"code=" + auth["code"]
@@ -273,7 +275,7 @@ func _on_oauth_authorize_button_pressed() -> void:
 	var token = token_json["access_token"]
 	progress.value = 3
 	msg("Got access token")
-	var authRes = await discord.command_authenticate(token)
+	var _authRes = await discord.command_authenticate(token)
 	msg("OAuth complete")
 	discord.subscribe_to_events()
 	$"%OauthWindow".visible = false
