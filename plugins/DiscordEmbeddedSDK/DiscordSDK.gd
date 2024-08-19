@@ -48,42 +48,42 @@ func _handle_message(event):
 		if (data["cmd"] == "DISPATCH"):
 			_handle_dispatch(data)
 		elif (data["nonce"] != null):
-			emit_signal("_command_response_received", data)
+			_command_response_received.emit(data)
 		else:
-			emit_signal("packet_received", event[0].data[0], data);
+			packet_received.emit(event[0].data[0], data)
 	else:
-		emit_signal("packet_received", event[0].data[0], data);
+		packet_received.emit(event[0].data[0], data)
 
 func _handle_dispatch(data):
 	var event = data["evt"]
-	emit_signal("dispatch_any", event, data["data"])
+	dispatch_any.emit(event, data["data"])
 	match event:
 		"READY":
 			is_ready = true
-			emit_signal("dispatch_ready", data["data"])
+			dispatch_ready.emit(data["data"])
 		"ERROR":
-			emit_signal("dispatch_error", data["data"])
+			dispatch_error.emit(data["data"])
 		"VOICE_STATE_UPDATE":
-			emit_signal("dispatch_voice_state_update", data["data"])
+			dispatch_voice_state_update.emit(data["data"])
 		"SPEAKING_START":
-			emit_signal("dispatch_speaking_start", data["data"])
+			dispatch_speaking_start.emit(data["data"])
 		"SPEAKING_STOP":
-			emit_signal("dispatch_speaking_stop", data["data"])
+			dispatch_speaking_stop.emit(data["data"])
 		"ACTIVITY_LAYOUT_MODE_UPDATE":
-			emit_signal("dispatch_activity_layout_mode_update", data["data"])
+			dispatch_activity_layout_mode_update.emit(data["data"])
 		"ORIENTATION_UPDATE":
-			emit_signal("dispatch_orientation_update", data["data"])
+			dispatch_orientation_update.emit(data["data"])
 		"CURRENT_USER_UPDATE":
 			user_id = data["data"]["id"]
-			emit_signal("dispatch_current_user_update", data["data"])
+			dispatch_current_user_update.emit(data["data"])
 		"THERMAL_STATE_UPDATE":
-			emit_signal("dispatch_thermal_state_update", data["data"])
+			dispatch_thermal_state_update.emit(data["data"])
 		"ACTIVITY_INSTANCE_PARTICIPANTS_UPDATE":
-			emit_signal("dispatch_activity_instance_participants_update", data["data"])
+			dispatch_activity_instance_participants_update.emit(data["data"])
 		"ENTITLEMENT_CREATE":
-			emit_signal("dispatch_entitlement_create", data["data"])
+			dispatch_entitlement_create.emit(data["data"])
 		"CURRENT_GUILD_MEMBER_UPDATE":
-			emit_signal("dispatch_current_guild_member_update", data["data"])
+			dispatch_current_guild_member_update.emit(data["data"])
 		_:
 			print("_handle_dispatch: Warning! Unknown event: " + str(event)) # convert to string just to be sure
 
@@ -96,7 +96,7 @@ func _ready():
 	else:
 		print("Not in a JavaScript environment. Discord SDK will not work.")
 
-func init(client_id: String):
+func init(client_id_: String):
 	if (not in_js):
 		print("Not in a JavaScript environment. Ignoring call to init()")
 		return
@@ -118,7 +118,7 @@ func init(client_id: String):
 	platform = query_map["platform"]
 	channel_id = query_map["channel_id"]
 	guild_id = query_map["guild_id"]
-	self.client_id = client_id
+	client_id = client_id_
 	
 	source = JavaScriptBridge.get_interface("window").parent.opener
 	if (source == null):
