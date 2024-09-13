@@ -1,6 +1,6 @@
 extends Control
 
-const CLIENT_ID = "1219337474266894397"
+const CLIENT_ID = "1242232029622439957"
 
 @onready var discord : DiscordSDK = get_node("/root/Discord")
 @onready var log_node : RichTextLabel = $"HBoxContainer/VSplitContainer/Log"
