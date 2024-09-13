@@ -263,14 +263,16 @@ func _on_oauth_authorize_button_pressed() -> void:
 	hreq.accept_gzip = false # ?? huh? https://forum.godotengine.org/t/-/37681/19
 	add_child(hreq)
 	var _token_res = hreq.request(
-		"https://" + CLIENT_ID + ".discordsays.com/.proxy/api/auth",
-		["Content-Type: application/x-www-form-urlencoded"],
+		"https://" + CLIENT_ID + ".discordsays.com/.proxy/api/auth/discord/",
+		["Content-Type: application/json"],
 		HTTPClient.METHOD_POST,
-		"code=" + auth["code"]
+		JSON.stringify({"code": auth["code"]})
 	)
 	var response = await hreq.request_completed
 	hreq.queue_free()
 	var json = response[3].get_string_from_utf8()
+	print("OAuth response payload:")
+	print(json)
 	var token_json = JSON.parse_string(json)
 	var token = token_json["access_token"]
 	progress.value = 3
