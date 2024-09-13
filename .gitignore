@@ -14,5 +14,8 @@ export_presets.cfg
 data_*/
 mono_crash.*.json
 
+# Ignore export folder but keep index.js and index.html
+export/*
+!export/index.html
 
-build/
+
